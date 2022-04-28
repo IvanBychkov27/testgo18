@@ -1,4 +1,4 @@
-// не работает
+// примеры рисования
 package main
 
 import (
@@ -55,10 +55,10 @@ func loop() {
 func main() {
 	wnd := g.NewMasterWindow("Canvas", 600, 600, g.MasterWindowFlagsNotResizable)
 
-	img, _ := g.LoadImage("gopher.png")
-	g.NewTextureFromRgba(img, func(tex *g.Texture) {
-		texture = tex
-	})
+	_, _ = g.LoadImage("gopher.png")
+	//g.NewTextureFromRgba(img, func(tex *g.Texture) {
+	//	texture = tex
+	//})
 
 	wnd.Run(loop)
 }
