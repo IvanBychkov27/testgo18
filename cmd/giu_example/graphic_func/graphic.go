@@ -10,9 +10,9 @@ var (
 	linedata               []float64
 	lineTicks              []g.PlotTicker
 	plotLineTitle          string
-	xmin, xmax, ymin, ymax float64
 	cond                   = g.ConditionAlways
 	checkedAutoSize        = true
+	xmin, xmax, ymin, ymax float64
 )
 
 func exitFunc() {
@@ -48,27 +48,40 @@ func cosFunc() {
 func sqrtFunc() {
 	plotLineTitle = "sqrt"
 	linedata = nil
-	xmin = float64(-10)
-	xmax = float64(1000)
-	ymin = float64(-1)
-	ymax = float64(10)
-	delta := 0.1
-	for x := 0.0; x < 100; x += delta {
-		linedata = append(linedata, math.Sqrt(x))
+	delta := 1.0
+	xmin = 0.0 - delta
+	xmax = 100 + delta
+
+	max := 0.0
+	for x := 0.0; x < xmax+delta; x += delta {
+		d := math.Sqrt(x)
+		if max < d {
+			max = d
+		}
+		linedata = append(linedata, d)
 	}
+	ymin = 0.0 - max*0.1
+	ymax = max * 1.1
 }
 
 func degreeFunc() {
 	plotLineTitle = "degree"
 	linedata = nil
-	xmin = float64(0)
-	xmax = float64(10)
-	ymin = float64(0)
-	ymax = float64(100)
+
 	delta := 1.0
-	for x := 0.0; x < 11; x += delta {
-		linedata = append(linedata, x*x)
+	xmin = 0.0 - delta
+	xmax = 100 + delta
+
+	max := 0.0
+	for x := 0.0; x < xmax+delta; x += delta {
+		d := x * x
+		if max < d {
+			max = d
+		}
+		linedata = append(linedata, d)
 	}
+	ymin = 0.0 - max*0.1
+	ymax = max * 1.1
 }
 
 func autoSizeFunc() {
