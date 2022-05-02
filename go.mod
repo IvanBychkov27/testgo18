@@ -6,6 +6,7 @@ require (
 	github.com/AllenDang/giu v0.6.2
 	github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad
 	github.com/hajimehoshi/ebiten/v2 v2.3.0
+	github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c
 	golang.org/x/image v0.0.0-20220321031419-a8550c1d254a
 )
 

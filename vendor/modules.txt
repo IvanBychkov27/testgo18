@@ -88,6 +88,9 @@ github.com/pkg/browser
 # github.com/sahilm/fuzzy v0.1.0
 ## explicit
 github.com/sahilm/fuzzy
+# github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c
+## explicit
+github.com/zenwerk/go-wave
 # golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56
 ## explicit; go 1.12
 golang.org/x/exp/shiny/driver/gldriver
