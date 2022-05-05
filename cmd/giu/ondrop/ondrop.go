@@ -1,3 +1,4 @@
+// пример InputTextMultiline
 package main
 
 import (

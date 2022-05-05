@@ -1,3 +1,6 @@
+//см еще https://github.com/faiface/beep/blob/master/examples/tone-player/main.go
+
+// программа создает звуковой файл
 package main
 
 import (

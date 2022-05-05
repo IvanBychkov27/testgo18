@@ -1,3 +1,4 @@
+// пример окна с лейблом
 package main
 
 import (

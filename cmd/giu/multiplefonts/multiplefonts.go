@@ -1,3 +1,4 @@
+//  примеры лейблов, кнопок и InputTextMultiline
 package main
 
 import (

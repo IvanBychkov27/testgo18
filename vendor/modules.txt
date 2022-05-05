@@ -7,6 +7,12 @@ github.com/AllenDang/go-findfont
 # github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad
 ## explicit; go 1.16
 github.com/AllenDang/imgui-go
+# github.com/faiface/beep v1.1.0
+## explicit; go 1.14
+github.com/faiface/beep
+github.com/faiface/beep/effects
+github.com/faiface/beep/mp3
+github.com/faiface/beep/speaker
 # github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3
 ## explicit
 github.com/faiface/mainthread
@@ -72,6 +78,21 @@ github.com/hajimehoshi/ebiten/v2/internal/thread
 github.com/hajimehoshi/ebiten/v2/internal/ui
 github.com/hajimehoshi/ebiten/v2/internal/vibrate
 github.com/hajimehoshi/ebiten/v2/text
+# github.com/hajimehoshi/go-mp3 v0.3.3
+## explicit; go 1.14
+github.com/hajimehoshi/go-mp3
+github.com/hajimehoshi/go-mp3/internal/bits
+github.com/hajimehoshi/go-mp3/internal/consts
+github.com/hajimehoshi/go-mp3/internal/frame
+github.com/hajimehoshi/go-mp3/internal/frameheader
+github.com/hajimehoshi/go-mp3/internal/huffman
+github.com/hajimehoshi/go-mp3/internal/imdct
+github.com/hajimehoshi/go-mp3/internal/maindata
+github.com/hajimehoshi/go-mp3/internal/sideinfo
+# github.com/hajimehoshi/oto v0.7.1
+## explicit; go 1.13
+github.com/hajimehoshi/oto
+github.com/hajimehoshi/oto/internal/mux
 # github.com/hajimehoshi/oto/v2 v2.1.0
 ## explicit; go 1.14
 github.com/hajimehoshi/oto/v2
@@ -85,6 +106,9 @@ github.com/jezek/xgb/xproto
 # github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 ## explicit; go 1.14
 github.com/pkg/browser
+# github.com/pkg/errors v0.9.1
+## explicit
+github.com/pkg/errors
 # github.com/sahilm/fuzzy v0.1.0
 ## explicit
 github.com/sahilm/fuzzy
