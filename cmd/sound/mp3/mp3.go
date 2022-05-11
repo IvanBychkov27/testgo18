@@ -21,7 +21,8 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	file, err := os.Open("cmd/sound/mp3/Tekhnologiya_-_Nazhmi_na_knopku_48044272.mp3")
+	fileName := "cmd/sound/mp3/Tekhnologiya_-_Nazhmi_na_knopku_48044272.mp3"
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,9 +44,9 @@ func main() {
 	//loop := beep.Loop(3, streamer)        // перемотка с 3й сек
 	//fast := beep.ResampleRatio(4, 5, loop) // перемотка с 4й секунды со скоростью 5х
 
-	ctrl := &beep.Ctrl{Streamer: beep.Loop(1, streamer), Paused: false} // -1 бесконечный повтор; установить паузу ctrl.Paused = true
+	Ctrl := &beep.Ctrl{Streamer: beep.Loop(-1, streamer), Paused: false} // -1 бесконечный повтор; установить паузу Ctrl.Paused = true
 	volume := &effects.Volume{
-		Streamer: ctrl,
+		Streamer: Ctrl,
 		Base:     2,     // экспоненциальное усиление - норма 2
 		Volume:   1,     // громкость от 0 до 10
 		Silent:   false, // false/true - вкл/выкл звук
@@ -61,29 +62,49 @@ func main() {
 	//	done <- true
 	//})))
 
-	//ctrl := &beep.Ctrl{Streamer: beep.Loop(-1, streamer), Paused: false} // установить паузу
-	//speaker.Play(ctrl)
+	//Ctrl := &beep.Ctrl{Streamer: beep.Loop(-1, streamer), Paused: false} // установить паузу
+	//speaker.Play(Ctrl)
+
+	chValue := make(chan string)
+	go values(chValue)
 
 	for {
-
 		//fmt.Print("Press [ENTER] to pause/resume. ")
 		//fmt.Scanln()
 		//
 		//speaker.Lock()
-		//ctrl.Paused = !ctrl.Paused
+		//Ctrl.Paused = !Ctrl.Paused
 		//speaker.Unlock()
 
 		select {
+		case d := <-chValue:
+			speaker.Lock()
+			if d == "+" {
+				volume.Volume += 0.5
+			}
+			if d == "-" {
+				volume.Volume -= 0.5
+			}
+			if d == "1" {
+				Ctrl.Paused = !Ctrl.Paused
+			}
+			speaker.Unlock()
 		case <-ctx.Done():
 			log.Println("Done...")
 			return
 		case <-done:
 			log.Println("Done...")
 			return
-		case <-time.After(time.Second * 5):
-			speaker.Lock()
-			fmt.Print(format.SampleRate.D(streamer.Position()).Round(time.Second), " ")
-			speaker.Unlock()
+			//case <-time.After(time.Second * 5):
+			//	speaker.Lock()
+			//	fmt.Print(format.SampleRate.D(streamer.Position()).Round(time.Second), " ")
+			//	speaker.Unlock()
 		}
 	}
+}
+
+func values(d chan string) {
+	var s string
+	fmt.Scanln(&s)
+	d <- s
 }
