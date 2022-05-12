@@ -1,3 +1,4 @@
+// пример редактора кода
 package main
 
 import (
