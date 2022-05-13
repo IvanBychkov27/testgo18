@@ -18,6 +18,7 @@ import (
 
 var (
 	allFiles       []string
+	allNameFiles   []string
 	nameFile       string
 	events         chan int
 	idx            int
@@ -28,11 +29,13 @@ func main() {
 	rand.Seed(time.Now().UnixMilli())
 
 	allFiles = make([]string, 0, 1000)
+
 	events = make(chan int)
 
 	path := "/home/ivan/Iv/mp3"
 	fileExtension := ".mp3"
 	listDir(path, fileExtension)
+	listNameFiles(path)
 
 	go processing()
 
@@ -63,7 +66,7 @@ func loop() {
 			g.Button("Next").OnClick(OnPlayNext),
 			g.Checkbox("random", &checkboxRamdom),
 		),
-		g.ListBox("ListBox1", allFiles).OnDClick(listDClick),
+		g.ListBox("ListBox1", allNameFiles).OnDClick(listDClick),
 	)
 }
 
@@ -71,6 +74,7 @@ func exitFunc() {
 	os.Exit(0)
 }
 
+// получаем список всех файлов mp3
 func listDir(path, fileExtension string) {
 	err := filepath.Walk(path, func(wPath string, info os.FileInfo, err error) error {
 		if wPath == path {
@@ -97,6 +101,15 @@ func listDir(path, fileExtension string) {
 	}
 }
 
+// получаем список всех файлов mp3 без пути к нему
+func listNameFiles(path string) {
+	allNameFiles = make([]string, 0, len(allFiles))
+	for i, nameFile := range allFiles {
+		name := fmt.Sprintf("%d - %s", i, strings.Trim(nameFile, path))
+		allNameFiles = append(allNameFiles, name)
+	}
+}
+
 func processing() {
 	for {
 		select {
@@ -111,7 +124,7 @@ func processing() {
 			}
 		}
 
-		nameFile = fmt.Sprintf(" %d - %s", idx, allFiles[idx])
+		nameFile = allNameFiles[idx]
 		go playMp3()
 	}
 }
