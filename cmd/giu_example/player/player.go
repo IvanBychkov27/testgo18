@@ -23,6 +23,8 @@ var (
 	events         chan int
 	idx            int
 	checkboxRamdom bool
+	fraction       float32
+	timePlay       string
 )
 
 func main() {
@@ -60,6 +62,8 @@ func loop() {
 			g.Label("Play:"),
 			g.Label(nameFile),
 		),
+		g.ProgressBar(fraction).Size(g.Auto, 0),
+		g.Label(timePlay),
 		g.Row(
 			g.Button("Play").OnClick(OnPlay),
 			g.Button("Stop").OnClick(OnPlayStop).Disabled(true),
@@ -166,11 +170,21 @@ func playMp3() {
 		done <- true
 	})))
 
+	ticker := time.NewTicker(time.Millisecond * 100)
+	defer ticker.Stop()
 	for {
 		select {
 		case <-done:
 			events <- 3
+			fmt.Println("play mp3 done...")
 			return
+		case <-ticker.C:
+			speaker.Lock()
+			fraction = float32(streamer.Position()) / float32(streamer.Len())
+			timePlay = fmt.Sprintf("%s / %s",
+				format.SampleRate.D(streamer.Position()).Round(time.Second).String(),
+				format.SampleRate.D(streamer.Len()).Round(time.Second).String())
+			speaker.Unlock()
 		}
 	}
 }
