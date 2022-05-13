@@ -25,6 +25,17 @@ var (
 	checkboxRamdom bool
 	fraction       float32
 	timePlay       string
+	stopPlay       chan struct{}
+	countPlay      int
+)
+
+const (
+	unknown = iota
+	play
+	stop
+	next
+	dClick
+	autoNext
 )
 
 func main() {
@@ -33,6 +44,7 @@ func main() {
 	allFiles = make([]string, 0, 1000)
 
 	events = make(chan int)
+	stopPlay = make(chan struct{})
 
 	path := "/home/ivan/Iv/mp3"
 	fileExtension := ".mp3"
@@ -66,7 +78,7 @@ func loop() {
 		g.Label(timePlay),
 		g.Row(
 			g.Button("Play").OnClick(OnPlay),
-			g.Button("Stop").OnClick(OnPlayStop).Disabled(true),
+			g.Button("Stop").OnClick(OnPlayStop),
 			g.Button("Next").OnClick(OnPlayNext),
 			g.Checkbox("random", &checkboxRamdom),
 		),
@@ -75,6 +87,7 @@ func loop() {
 }
 
 func exitFunc() {
+	stopPlayMp3()
 	os.Exit(0)
 }
 
@@ -119,7 +132,21 @@ func processing() {
 		select {
 		case event := <-events:
 			switch event {
-			case 3: // next
+			case play, dClick: // play, DClick
+				stopPlayMp3()
+			case stop: // stop
+				stopPlayMp3()
+				timePlay = ""
+				fraction = 0
+				continue
+			case next: // next
+				stopPlayMp3()
+				if checkboxRamdom {
+					idx = rand.Intn(len(allFiles))
+				} else {
+					idx++
+				}
+			case autoNext: // auto next
 				if checkboxRamdom {
 					idx = rand.Intn(len(allFiles))
 				} else {
@@ -128,12 +155,17 @@ func processing() {
 			}
 		}
 
+		time.Sleep(time.Millisecond * 200)
+
 		nameFile = allNameFiles[idx]
 		go playMp3()
 	}
 }
 
 func playMp3() {
+	countPlay++
+	defer func() { countPlay-- }()
+
 	if idx > len(allFiles)-1 {
 		idx = 0
 	}
@@ -174,9 +206,11 @@ func playMp3() {
 	defer ticker.Stop()
 	for {
 		select {
+		case <-stopPlay:
+			speaker.Close()
+			return
 		case <-done:
-			events <- 3
-			fmt.Println("play mp3 done...")
+			events <- autoNext
 			return
 		case <-ticker.C:
 			speaker.Lock()
@@ -189,19 +223,25 @@ func playMp3() {
 	}
 }
 
+func stopPlayMp3() {
+	for i := 0; i < countPlay; i++ {
+		stopPlay <- struct{}{}
+	}
+}
+
 func OnPlay() {
-	events <- 1
+	events <- play
 }
 
 func OnPlayStop() {
-	events <- 2
+	events <- stop
 }
 
 func OnPlayNext() {
-	events <- 3
+	events <- next
 }
 
 func listDClick(idxPlay int) {
 	idx = idxPlay
-	events <- 4
+	events <- dClick
 }
