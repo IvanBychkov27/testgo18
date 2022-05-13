@@ -17,11 +17,11 @@ import (
 )
 
 var (
-	allFiles []string
-	nameFile string
-	events   chan int
-	next     chan bool
-	idx      int
+	allFiles       []string
+	nameFile       string
+	events         chan int
+	idx            int
+	checkboxRamdom bool
 )
 
 func main() {
@@ -29,7 +29,6 @@ func main() {
 
 	allFiles = make([]string, 0, 1000)
 	events = make(chan int)
-	next = make(chan bool)
 
 	path := "/home/ivan/Iv/mp3"
 	fileExtension := ".mp3"
@@ -62,7 +61,7 @@ func loop() {
 			g.Button("Play").OnClick(OnPlay),
 			g.Button("Stop").OnClick(OnPlayStop).Disabled(true),
 			g.Button("Next").OnClick(OnPlayNext),
-			g.Button("Random").OnClick(OnPlayRandom),
+			g.Checkbox("random", &checkboxRamdom),
 		),
 		g.ListBox("ListBox1", allFiles).OnDClick(listDClick),
 	)
@@ -70,11 +69,6 @@ func loop() {
 
 func exitFunc() {
 	os.Exit(0)
-}
-
-func listDClick(idxPlay int) {
-	idx = idxPlay
-	events <- 5
 }
 
 func listDir(path, fileExtension string) {
@@ -106,17 +100,14 @@ func listDir(path, fileExtension string) {
 func processing() {
 	for {
 		select {
-		case <-next:
-			idx++
 		case event := <-events:
 			switch event {
-			case 1: // play
-			//case 2: // stop
 			case 3: // next
-				idx++
-			case 4: // random
-				idx = rand.Intn(len(allFiles))
-			case 5: // dClick
+				if checkboxRamdom {
+					idx = rand.Intn(len(allFiles))
+				} else {
+					idx++
+				}
 			}
 		}
 
@@ -164,9 +155,8 @@ func playMp3() {
 
 	for {
 		select {
-		//case <-stop:
 		case <-done:
-			next <- true
+			events <- 3
 			return
 		}
 	}
@@ -184,6 +174,7 @@ func OnPlayNext() {
 	events <- 3
 }
 
-func OnPlayRandom() {
+func listDClick(idxPlay int) {
+	idx = idxPlay
 	events <- 4
 }
