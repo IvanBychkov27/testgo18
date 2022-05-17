@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -27,7 +28,16 @@ var (
 	timePlay       string
 	stopPlay       chan struct{}
 	countPlay      int
+	itemSelected   int32
+	dirItems       []string
+	dirInfo        []DirDevice
 )
+
+type DirDevice struct {
+	Path  string
+	Name  string
+	Count int
+}
 
 const (
 	unknown = iota
@@ -42,14 +52,13 @@ func main() {
 	rand.Seed(time.Now().UnixMilli())
 
 	allFiles = make([]string, 0, 1000)
+	dirItems = make([]string, 0, 100)
+	dirItems = append(dirItems, "...")
 
 	events = make(chan int)
 	stopPlay = make(chan struct{})
 
-	path := "/home/ivan/Iv/mp3"
-	fileExtension := ".mp3"
-	listDir(path, fileExtension)
-	listNameFiles(path)
+	go allDirs()
 
 	go processing()
 
@@ -67,6 +76,9 @@ func loop() {
 	g.SingleWindowWithMenuBar().Layout(
 		g.MenuBar().Layout(
 			g.Menu("File").Layout(
+				g.Menu("Dir").Layout(
+					g.Combo("", dirItems[itemSelected], dirItems, &itemSelected).OnChange(comboChanged),
+				),
 				g.MenuItem("Exit").OnClick(exitFunc),
 			),
 		),
@@ -86,13 +98,71 @@ func loop() {
 	)
 }
 
+func comboChanged() {
+	path := dirInfo[itemSelected].Path
+	listDir(path, ".mp3")
+	listNameFiles(path)
+}
+
 func exitFunc() {
 	stopPlayMp3()
+	time.Sleep(time.Millisecond * 200)
 	os.Exit(0)
+}
+
+func allDirs() {
+	path, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("error user home dir:", err.Error())
+		return
+	}
+	listDir(path, ".mp3")
+
+	dirs := make(map[string]int, 0)
+	for _, d := range allFiles {
+		name := filepath.Dir(d)
+		if strings.Contains(name, ".local") {
+			continue
+		}
+		dirs[name]++
+
+		inc := 0
+		for {
+			inc++
+			name = filepath.Dir(name)
+			if name == "" || name == "/" || name == "." || inc > 30 {
+				break
+			}
+			dirs[name]++
+		}
+	}
+
+	dirInfo = make([]DirDevice, 0, len(dirs))
+	for pathDir, count := range dirs {
+		d := DirDevice{
+			Path:  pathDir,
+			Name:  strings.TrimPrefix(pathDir, path),
+			Count: count,
+		}
+		dirInfo = append(dirInfo, d)
+	}
+
+	sort.Slice(dirInfo, func(i, j int) bool {
+		return dirInfo[i].Name < dirInfo[j].Name
+	})
+
+	dirItems = nil
+	for _, v := range dirInfo {
+		if v.Name == "" {
+			v.Name = "all"
+		}
+		dirItems = append(dirItems, fmt.Sprintf("%4d - %s", v.Count, v.Name))
+	}
 }
 
 // получаем список всех файлов mp3
 func listDir(path, fileExtension string) {
+	allFiles = nil
 	err := filepath.Walk(path, func(wPath string, info os.FileInfo, err error) error {
 		if wPath == path {
 			return nil
@@ -103,7 +173,7 @@ func listDir(path, fileExtension string) {
 		}
 
 		if fileExtension != "" {
-			if strings.Contains(wPath, fileExtension) {
+			if strings.HasSuffix(wPath, fileExtension) && !strings.Contains(wPath, ".local") {
 				allFiles = append(allFiles, wPath)
 			}
 			return nil
@@ -122,7 +192,7 @@ func listDir(path, fileExtension string) {
 func listNameFiles(path string) {
 	allNameFiles = make([]string, 0, len(allFiles))
 	for i, nameFile := range allFiles {
-		name := fmt.Sprintf("%d - %s", i, strings.Trim(nameFile, path))
+		name := fmt.Sprintf("%d - %s", i, strings.TrimPrefix(nameFile, path+"/"))
 		allNameFiles = append(allNameFiles, name)
 	}
 }
@@ -157,7 +227,15 @@ func processing() {
 
 		time.Sleep(time.Millisecond * 200)
 
-		nameFile = allNameFiles[idx]
+		if idx > len(allFiles)-1 {
+			idx = 0
+		}
+
+		if len(allNameFiles) == 0 {
+			continue
+		}
+		nameFile = allNameFiles[idx] // имя выбранного файла - выводим на экран
+
 		go playMp3()
 	}
 }
@@ -165,10 +243,6 @@ func processing() {
 func playMp3() {
 	countPlay++
 	defer func() { countPlay-- }()
-
-	if idx > len(allFiles)-1 {
-		idx = 0
-	}
 
 	file, errOpen := os.Open(allFiles[idx])
 	if errOpen != nil {

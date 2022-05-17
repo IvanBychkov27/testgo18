@@ -1,10 +1,11 @@
+// http://прохоренок.рф/pdf/go/ch15-go-funktsii-dlya-raboty-s-katalogami.html
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	d := make([]byte, 0, 1024)
-
-	fmt.Println("len d =", len(d))
-	fmt.Println("cap d =", cap(d))
+	fmt.Println(os.Getwd()) // Getwd() — позволяет получить строковое представление текущего рабочего каталога
 }
