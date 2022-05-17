@@ -1,0 +1,4 @@
+Необходимо из данных в папке DB24 подготовить таблицу
+
+id,      name,              country_code, country_full, is_mobile
+3590300, Rhizomorphic GmbH, DE,           Germany,      false
