@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -17,15 +18,19 @@ type Data struct {
 }
 
 func main() {
-	fileName := ".debug/DB24/data.csv"
-	data, err := parseDataFile(fileName)
+	fileNameReadFlag := flag.String("read", ".debug/DB24/data.csv", "reading file")
+	fileNameSaveFlag := flag.String("out", ".debug/res/data_isp.csv", "saved file")
+	flag.Parse()
+
+	fileNameRead := *fileNameReadFlag
+	data, err := parseDataFile(fileNameRead)
 	if err != nil {
 		log.Println("error parse data file:", err.Error())
 		os.Exit(1)
 	}
 	log.Println("len data =", len(data))
 
-	fileNameSave := ".debug/res/data_isp.csv"
+	fileNameSave := *fileNameSaveFlag
 	errWriteDataInFile := saveDataInFile(data, fileNameSave)
 	if errWriteDataInFile != nil {
 		log.Println("error save data in file:", errWriteDataInFile.Error())
@@ -78,14 +83,7 @@ func saveDataInFile(data map[string]*Data, fileNameSave string) error {
 	defer df.Close()
 
 	for _, d := range data {
-		resData := ""
-
-		if d.IsMobile {
-			resData += `"` + d.Name + `","` + d.CountryCode + `","` + d.CountryFull + `","true"` + "\n"
-		} else {
-			resData += `"` + d.Name + `","` + d.CountryCode + `","` + d.CountryFull + `","false"` + "\n"
-		}
-
+		resData := fmt.Sprintf("%s,%s,%s,%t\n", d.Name, d.CountryCode, d.CountryFull, d.IsMobile)
 		_, errWrite := df.WriteString(resData)
 		if errWrite != nil {
 			return errWrite
