@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
@@ -18,6 +19,7 @@ import (
 )
 
 var (
+	allDir         []string
 	allFiles       []string
 	allNameFiles   []string
 	nameFile       string
@@ -31,6 +33,7 @@ var (
 	itemSelected   int32
 	dirItems       []string
 	dirInfo        []DirDevice
+	currentPath    string
 )
 
 type DirDevice struct {
@@ -51,6 +54,7 @@ const (
 func main() {
 	rand.Seed(time.Now().UnixMilli())
 
+	allDir = make([]string, 0, 1000)
 	allFiles = make([]string, 0, 1000)
 	dirItems = make([]string, 0, 100)
 	dirItems = append(dirItems, "...")
@@ -58,11 +62,13 @@ func main() {
 	events = make(chan int)
 	stopPlay = make(chan struct{})
 
+	getListFiles()
+
 	go allDirs()
 
 	go processing()
 
-	wnd := g.NewMasterWindow("Player Iv", 800, 640, 0).
+	wnd := g.NewMasterWindow("Player Iv", 400, 500, 0).
 		RegisterKeyboardShortcuts(
 			g.WindowShortcut{
 				Key:      g.KeyEscape,
@@ -100,12 +106,14 @@ func loop() {
 
 func comboChanged() {
 	path := dirInfo[itemSelected].Path
-	listDir(path, ".mp3")
+	getListAllFiles(path, ".mp3")
 	listNameFiles(path)
+	currentPath = path
 }
 
 func exitFunc() {
 	stopPlayMp3()
+	saveListAllFiles(currentPath)
 	time.Sleep(time.Millisecond * 200)
 	os.Exit(0)
 }
@@ -116,10 +124,11 @@ func allDirs() {
 		fmt.Println("error user home dir:", err.Error())
 		return
 	}
-	listDir(path, ".mp3")
+
+	getListDir(path, ".mp3")
 
 	dirs := make(map[string]int, 0)
-	for _, d := range allFiles {
+	for _, d := range allDir {
 		name := filepath.Dir(d)
 		if strings.Contains(name, ".local") {
 			continue
@@ -136,6 +145,7 @@ func allDirs() {
 			dirs[name]++
 		}
 	}
+	allDir = nil
 
 	dirInfo = make([]DirDevice, 0, len(dirs))
 	for pathDir, count := range dirs {
@@ -161,7 +171,7 @@ func allDirs() {
 }
 
 // получаем список всех файлов mp3
-func listDir(path, fileExtension string) {
+func getListAllFiles(path, fileExtension string) {
 	allFiles = nil
 	err := filepath.Walk(path, func(wPath string, info os.FileInfo, err error) error {
 		if wPath == path {
@@ -188,6 +198,33 @@ func listDir(path, fileExtension string) {
 	}
 }
 
+// получаем список всех папок с файлами mp3
+func getListDir(path, fileExtension string) {
+	err := filepath.Walk(path, func(wPath string, info os.FileInfo, err error) error {
+		if wPath == path {
+			return nil
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		if fileExtension != "" {
+			if strings.HasSuffix(wPath, fileExtension) && !strings.Contains(wPath, ".local") {
+				allDir = append(allDir, wPath)
+			}
+			return nil
+		}
+
+		allDir = append(allDir, wPath)
+		return nil
+	})
+
+	if err != nil {
+		fmt.Println("error walk get list dir:", err.Error())
+	}
+}
+
 // получаем список всех файлов mp3 без пути к нему
 func listNameFiles(path string) {
 	allNameFiles = make([]string, 0, len(allFiles))
@@ -195,6 +232,33 @@ func listNameFiles(path string) {
 		name := fmt.Sprintf("%d - %s", i, strings.TrimPrefix(nameFile, path+"/"))
 		allNameFiles = append(allNameFiles, name)
 	}
+}
+
+// сохраняем path в файл prayer_iv.lst
+func saveListAllFiles(path string) {
+	df, errCreateFile := os.Create("prayer_iv.lst")
+	if errCreateFile != nil {
+		fmt.Println("error create file:", errCreateFile.Error())
+		return
+	}
+	defer df.Close()
+
+	_, errWrite := df.WriteString(path)
+	if errWrite != nil {
+		fmt.Println("error write file:", errWrite.Error())
+		return
+	}
+}
+
+// получаем список файлов который был при предыдущем выходе из программы
+func getListFiles() {
+	file, errReadFile := ioutil.ReadFile("prayer_iv.lst")
+	if errReadFile != nil {
+		return
+	}
+	path := string(file)
+	getListAllFiles(path, ".mp3")
+	listNameFiles(path)
 }
 
 func processing() {
