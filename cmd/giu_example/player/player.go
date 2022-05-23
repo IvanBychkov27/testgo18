@@ -259,6 +259,7 @@ func getListFiles() {
 	path := string(file)
 	getListAllFiles(path, ".mp3")
 	listNameFiles(path)
+	currentPath = path
 }
 
 func processing() {
