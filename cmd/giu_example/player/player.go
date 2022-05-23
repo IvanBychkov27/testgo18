@@ -34,6 +34,10 @@ var (
 	dirItems       []string
 	dirInfo        []DirDevice
 	currentPath    string
+	value          int32 = 30
+	valueChange    chan struct{}
+	pause          chan struct{}
+	labelInfo      string
 )
 
 type DirDevice struct {
@@ -61,6 +65,9 @@ func main() {
 
 	events = make(chan int)
 	stopPlay = make(chan struct{})
+	valueChange = make(chan struct{})
+	pause = make(chan struct{})
+	labelInfo = "Play :"
 
 	getListFiles()
 
@@ -89,17 +96,23 @@ func loop() {
 			),
 		),
 		g.Row(
-			g.Label("Play:"),
+			g.Label(labelInfo),
 			g.Label(nameFile),
 		),
 		g.ProgressBar(fraction).Size(g.Auto, 0),
 		g.Label(timePlay),
 		g.Row(
 			g.Button("Play").OnClick(OnPlay),
+			g.Button("Pause").OnClick(OnPause),
 			g.Button("Stop").OnClick(OnPlayStop),
 			g.Button("Next").OnClick(OnPlayNext),
-			g.Checkbox("random", &checkboxRamdom),
+			g.Checkbox("random ", &checkboxRamdom),
 		),
+		g.Row(
+			g.Label(" Value"),
+			g.SliderInt(&value, 0, 100).Size(130).OnChange(OnValue),
+		),
+
 		g.ListBox("ListBox1", allNameFiles).OnDClick(listDClick),
 	)
 }
@@ -330,9 +343,9 @@ func playMp3() {
 	ctrl := &beep.Ctrl{Streamer: beep.Loop(1, streamer), Paused: false} // -1 бесконечный повтор; установить паузу Ctrl.Paused = true
 	volume := &effects.Volume{
 		Streamer: ctrl,
-		Base:     1,     // экспоненциальное усиление - норма 2
-		Volume:   0.5,   // громкость от 0 до 10
-		Silent:   false, // false/true - вкл/выкл звук
+		Base:     float64(value) / 100, // экспоненциальное усиление - норма 2
+		Volume:   1,                    // громкость от 0 до 10
+		Silent:   false,                // false/true - вкл/выкл звук
 	}
 	fast := beep.ResampleRatio(4, 1, volume) // воспроизведение со скоростью 1х
 
@@ -340,13 +353,13 @@ func playMp3() {
 	speaker.Play(beep.Seq(fast, beep.Callback(func() {
 		done <- true
 	})))
+	defer speaker.Close()
 
 	ticker := time.NewTicker(time.Millisecond * 100)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-stopPlay:
-			speaker.Close()
 			return
 		case <-done:
 			events <- autoNext
@@ -357,6 +370,21 @@ func playMp3() {
 			timePlay = fmt.Sprintf("%s / %s",
 				format.SampleRate.D(streamer.Position()).Round(time.Second).String(),
 				format.SampleRate.D(streamer.Len()).Round(time.Second).String())
+			speaker.Unlock()
+
+		case <-pause:
+			speaker.Lock()
+			ctrl.Paused = !ctrl.Paused
+			if ctrl.Paused {
+				labelInfo = "Pause:"
+			} else {
+				labelInfo = "Play :"
+			}
+			speaker.Unlock()
+
+		case <-valueChange:
+			speaker.Lock()
+			volume.Base = float64(value) / 100 // громкость
 			speaker.Unlock()
 		}
 	}
@@ -383,4 +411,16 @@ func OnPlayNext() {
 func listDClick(idxPlay int) {
 	idx = idxPlay
 	events <- dClick
+}
+
+func OnValue() {
+	if countPlay > 0 {
+		valueChange <- struct{}{}
+	}
+}
+
+func OnPause() {
+	if countPlay > 0 {
+		pause <- struct{}{}
+	}
 }
