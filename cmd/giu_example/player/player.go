@@ -109,8 +109,8 @@ func loop() {
 			g.Checkbox("random ", &checkboxRamdom),
 		),
 		g.Row(
-			g.Label(" Value"),
-			g.SliderInt(&value, 0, 100).Size(130).OnChange(OnValue),
+			g.Label(" Volume"),
+			g.SliderInt(&value, 0, 100).Size(125).OnChange(OnValue),
 		),
 
 		g.ListBox("ListBox1", allNameFiles).OnDClick(listDClick),
@@ -324,20 +324,23 @@ func playMp3() {
 
 	file, errOpen := os.Open(allFiles[idx])
 	if errOpen != nil {
-		log.Fatal(errOpen)
+		log.Println("error open file:", errOpen.Error())
+		return
 	}
 	defer file.Close()
 
 	streamer, format, errMP3Decode := mp3.Decode(file)
 	if errMP3Decode != nil {
-		log.Fatal(errMP3Decode)
+		log.Println("error mp3 decode:", errMP3Decode.Error())
+		return
 	}
 	defer streamer.Close()
 
 	sr := format.SampleRate * 1 // скорость воспроизведения файла (*2 - ускоряет в 2 раза!)
 	errInit := speaker.Init(sr, sr.N(time.Second/10))
 	if errInit != nil {
-		log.Fatal(errInit)
+		log.Println("error init speaker:", errInit.Error())
+		return
 	}
 
 	ctrl := &beep.Ctrl{Streamer: beep.Loop(1, streamer), Paused: false} // -1 бесконечный повтор; установить паузу Ctrl.Paused = true
@@ -401,6 +404,7 @@ func OnPlay() {
 }
 
 func OnPlayStop() {
+	labelInfo = "Play :"
 	events <- stop
 }
 

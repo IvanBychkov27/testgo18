@@ -3,14 +3,18 @@ package main
 
 import "fmt"
 
-func main() {
-	a := false
-	b := false
+type data struct {
+	d int
+}
 
-	if a == b {
-		fmt.Println("a = b")
-	} else {
-		fmt.Println("a != b")
+func main() {
+	a := map[int]*data{1: &data{10}}
+
+	idx := 1
+	_, ok := a[idx]
+	if ok && a[idx].d == 10 {
+		fmt.Println("len(a):", len(a))
+		fmt.Println("data:", a[idx].d)
 	}
 
 }
