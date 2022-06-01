@@ -18,10 +18,11 @@ type NN struct {
 }
 
 func main() {
-	nn := newNN(3)
+	nn := newNN(5)
 	ds := getData()
+	//ds := getData2()
 
-	trainingNN(nn, ds, 0.9, 100)
+	trainingNN(nn, ds)
 
 	fmt.Println("nn :", nn.w)
 	fmt.Println("mse:", nn.mse)
@@ -35,31 +36,84 @@ func main() {
 // rate - скорость обучения нейросети (от 10 до 0.001 - чем меньше значение тем медленее обучение, но более точное);
 // era - кол-во проходов по всем обучаемым данным;
 // rate и era - подбираются экспериментально
-func trainingNN(nn *NN, ds []Data, rate float64, era int) {
+func trainingNN(nn *NN, ds []Data) {
 	if len(ds) == 0 || len(nn.w) == 0 || len(nn.w) != len(ds[0].x) {
 		fmt.Printf("error training nn - incorrect data entry: len data %d, len nn %d", len(ds[0].x), len(nn.w))
 		return
 	}
 
-	for t := 0; t < era; t++ { // количество обучений
+	rate := 0.5
+	mseMin := 1.0
+	era := 0
+	for { // количество обучений
+		era++
 		for _, d := range ds { // перебор всех входных данных
-			u := unitSum(d.x, nn.w)
-			errSum := u - d.r
-			dw := errSum * sigmoidDerivative(u)
+			u := unitSum(d.x, nn.w)             // текущий результат нейросети
+			errSum := u - d.r                   // отклонение от ожидаемого результата
+			dw := errSum * sigmoidDerivative(u) // дельта весов
 			for i := 0; i < len(d.x); i++ {
-				nn.w[i] -= d.x[i] * dw * rate
+				nn.w[i] -= d.x[i] * dw * rate // корректировка весов нейросети
+			}
+		}
+
+		if era%5 == 0 {
+			dmse := calculateAllErrRateNN(nn, ds, false)
+			if mseMin > dmse {
+				mseMin = dmse
+			} else {
+				break
+			}
+
+			//fmt.Println("mse:", dmse, t)
+			if rate > 0.01 {
+				rate -= 0.01
+			} else {
+				rate -= 0.001
+			}
+
+			if rate <= 0 {
+				rate = 0.0001
 			}
 		}
 	}
-	nn.mse = calculateAllErrRateNN(nn, ds, false)
+	nn.mse = calculateAllErrRateNN(nn, ds, false) // сохранение данных среднеквадратичной ошибки для нейросети
+	fmt.Println("era :", era)
+	//fmt.Println("rate:", rate)
 }
 
 func getData() []Data {
 	data := []Data{
-		{[]float64{1, 0, 0}, 0.0},
-		{[]float64{1, 1, 0}, 0.1},
-		{[]float64{1, 0, 1}, 0.2},
-		{[]float64{1, 1, 1}, 0.3},
+		{[]float64{1, 0, 0, 0, 0}, 0.0},
+		{[]float64{1, 1, 0, 0, 0}, 0.1},
+		{[]float64{1, 0, 1, 0, 0}, 0.2},
+		{[]float64{1, 1, 1, 0, 0}, 0.3},
+		{[]float64{1, 0, 0, 1, 0}, 0.4},
+		{[]float64{1, 1, 0, 1, 0}, 0.5},
+		{[]float64{1, 0, 1, 1, 0}, 0.6},
+		{[]float64{1, 1, 1, 1, 0}, 0.7},
+		{[]float64{1, 0, 0, 0, 1}, 0.8},
+		{[]float64{1, 1, 0, 0, 1}, 0.9},
+		{[]float64{1, 0, 1, 0, 1}, 1.0},
+	}
+	return data
+}
+
+func getData2() []Data {
+	data := []Data{
+		{[]float64{1, 0, 0, 0, 0}, 0.00},
+		{[]float64{1, 1, 0, 0, 0}, 0.08},
+		{[]float64{1, 0, 1, 0, 0}, 0.16},
+		{[]float64{1, 1, 1, 0, 0}, 0.24},
+		{[]float64{1, 0, 0, 1, 0}, 0.32},
+		{[]float64{1, 1, 0, 1, 0}, 0.40},
+		{[]float64{1, 0, 1, 1, 0}, 0.48},
+		{[]float64{1, 1, 1, 1, 0}, 0.56},
+		{[]float64{1, 0, 0, 0, 1}, 0.64},
+		{[]float64{1, 1, 0, 0, 1}, 0.72},
+		{[]float64{1, 0, 1, 0, 1}, 0.80},
+		{[]float64{1, 1, 1, 0, 1}, 0.88},
+		{[]float64{1, 0, 0, 1, 1}, 0.96},
+		{[]float64{1, 1, 0, 1, 1}, 1.0},
 	}
 	return data
 }
