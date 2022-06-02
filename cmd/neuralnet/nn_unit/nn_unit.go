@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -14,13 +17,13 @@ type Data struct {
 
 // нейрон
 type Unit struct {
-	w     []float64 // входные веса нейрона
-	value float64   // значение нейрона
+	W     []float64 `json:"w"`     // входные веса нейрона
+	Value float64   `json:"value"` // значение нейрона
 }
 
-type NN struct {
-	nn  [][]*Unit // данные нейросети
-	mse float64   // среднеквадратичная ошибка нейросети
+type Net struct {
+	NN  [][]*Unit `json:"nn"`  // данные нейросети
+	MSE float64   `json:"mse"` // среднеквадратичная ошибка нейросети
 }
 
 // создание нейрона:
@@ -47,7 +50,7 @@ func newLayer(n, m int) []*Unit {
 	return layer
 }
 
-func newNN(input, hidden, output int) *NN {
+func newNN(input, hidden, output int) *Net {
 	nn := make([][]*Unit, 0)
 	inputLayer := newLayer(input, 0)
 	hiddenLayer := newLayer(hidden, input)
@@ -55,7 +58,7 @@ func newNN(input, hidden, output int) *NN {
 
 	nn = append(nn, inputLayer, hiddenLayer, outputLayer)
 
-	return &NN{nn, 1}
+	return &Net{nn, 1}
 }
 
 func getData0() []Data {
@@ -87,41 +90,46 @@ func getData() []Data {
 
 func getData2() []Data {
 	data := []Data{
-		{[]float64{1, 0, 0, 0, 0}, []float64{0.00}},
-		{[]float64{1, 1, 0, 0, 0}, []float64{0.08}},
-		{[]float64{1, 0, 1, 0, 0}, []float64{0.16}},
-		{[]float64{1, 1, 1, 0, 0}, []float64{0.24}},
-		{[]float64{1, 0, 0, 1, 0}, []float64{0.32}},
-		{[]float64{1, 1, 0, 1, 0}, []float64{0.40}},
-		{[]float64{1, 0, 1, 1, 0}, []float64{0.48}},
-		{[]float64{1, 1, 1, 1, 0}, []float64{0.56}},
-		{[]float64{1, 0, 0, 0, 1}, []float64{0.64}},
-		{[]float64{1, 1, 0, 0, 1}, []float64{0.72}},
-		{[]float64{1, 0, 1, 0, 1}, []float64{0.80}},
-		{[]float64{1, 1, 1, 0, 1}, []float64{0.88}},
-		{[]float64{1, 0, 0, 1, 1}, []float64{0.96}},
-		{[]float64{1, 1, 0, 1, 1}, []float64{1.0}},
+		{[]float64{1, 0, 0, 0, 0}, []float64{0.0, 0.0}},
+		{[]float64{1, 1, 0, 0, 0}, []float64{0.1, 0.0}},
+		{[]float64{1, 0, 1, 0, 0}, []float64{0.2, 0.0}},
+		{[]float64{1, 1, 1, 0, 0}, []float64{0.3, 0.0}},
+		{[]float64{1, 0, 0, 1, 0}, []float64{0.4, 0.0}},
+		{[]float64{1, 1, 0, 1, 0}, []float64{0.5, 0.0}},
+		{[]float64{1, 0, 1, 1, 0}, []float64{0.6, 0.0}},
+		{[]float64{1, 1, 1, 1, 0}, []float64{0.7, 0.0}},
+		{[]float64{1, 0, 0, 0, 1}, []float64{0.8, 0.0}},
+		{[]float64{1, 1, 0, 0, 1}, []float64{0.9, 0.0}},
+		{[]float64{1, 0, 1, 0, 1}, []float64{0.0, 0.1}},
+		{[]float64{1, 1, 1, 0, 1}, []float64{0.1, 0.1}},
+		{[]float64{1, 0, 0, 1, 1}, []float64{0.2, 0.1}},
+		{[]float64{1, 1, 0, 1, 1}, []float64{0.3, 0.1}},
+		{[]float64{1, 0, 1, 1, 1}, []float64{0.4, 0.1}},
+		{[]float64{1, 1, 1, 1, 1}, []float64{0.5, 0.1}},
 	}
 	return data
 }
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	nn := newNN(5, 4, 1)
 	data := getData()
+	nn := newNN(5, 5, 1)
 
 	trainingNN(nn, data)
 	calculateAllErrRateNN(nn, data, true)
+	//saveNN(nn, "cmd/neuralnet/nn_unit/file_nn.nn")
 
-	//idx := 1
+	//nn := openNN("cmd/neuralnet/nn_unit/file_nn.nn")
+	//
+	//idx := 9
 	//d := data[idx].x
 	//r := data[idx].r
 	//res := directWorkNN(nn, d)
-	//fmt.Printf("exp = %2.4f  res = %2.4f  mse:%0.4f\n", r, res, MSE(res, r))
+	//fmt.Printf("exp = %2.4f  res = %2.4f  MSE:%0.4f\n", r, res, MSE(res, r))
 	//printNN(nn)
 }
 
-func trainingNN(net *NN, ds []Data) {
+func trainingNN(net *Net, ds []Data) {
 	rate := 0.5
 	mseMin := 1.0
 	era := 0
@@ -133,6 +141,7 @@ func trainingNN(net *NN, ds []Data) {
 			for i, u := range us {       // перебор всех резултатов нейросети
 				errNN := u - d.r[i]                // отклонение от ожидаемого результата
 				dw := errNN * sigmoidDerivative(u) // дельта весов для слоя outputLayer
+				//dw := errNN * thPrime(u)           // дельта весов для слоя outputLayer
 				reverseDistribution(net, dw, rate) // корректировка весов нейросети
 			}
 		}
@@ -145,7 +154,7 @@ func trainingNN(net *NN, ds []Data) {
 				break
 			}
 
-			//fmt.Println("mse:", errRate, era)
+			//fmt.Println("MSE:", errRate, era)
 			if era > 1000000 {
 				break
 			}
@@ -162,13 +171,13 @@ func trainingNN(net *NN, ds []Data) {
 		}
 
 	}
-	net.mse = mseMin
+	net.MSE = mseMin
 	fmt.Println("era :", era)
 	//fmt.Println("rate:", rate)
 }
 
 // метод обратного распределение ошибки - корректировка весов нейросети
-func reverseDistribution(net *NN, dw, rate float64) {
+func reverseDistribution(net *Net, dw, rate float64) {
 	const (
 		inputLayer  = 0
 		hiddenLayer = 1
@@ -177,37 +186,38 @@ func reverseDistribution(net *NN, dw, rate float64) {
 	var nn *Unit
 
 	// корректировка весов слоя outputLayer
-	for l := 0; l < len(net.nn[outputLayer]); l++ { // перебор всех эл-тов слоя outputLayer
-		nn = net.nn[outputLayer][l]
-		for i := 0; i < len(net.nn[hiddenLayer]); i++ {
-			nn.w[i] -= net.nn[hiddenLayer][i].value * dw * rate // корректировка весов слоя outputLayer
+	for l := 0; l < len(net.NN[outputLayer]); l++ { // перебор всех эл-тов слоя outputLayer
+		nn = net.NN[outputLayer][l]
+		for i := 0; i < len(net.NN[hiddenLayer]); i++ {
+			nn.W[i] -= net.NN[hiddenLayer][i].Value * dw * rate // корректировка весов слоя outputLayer
 		}
 	}
 
 	// корректировка весов слоя hiddenLayer
-	for l := 0; l < len(net.nn[hiddenLayer]); l++ { // перебор всех эл-тов слоя hiddenLayer
-		nn = net.nn[hiddenLayer][l]
+	for l := 0; l < len(net.NN[hiddenLayer]); l++ { // перебор всех эл-тов слоя hiddenLayer
+		nn = net.NN[hiddenLayer][l]
 
 		var errHL float64                               // средняее отклонение от ожидаемого результата для слоя hiddenLayer
-		for t := 0; t < len(net.nn[outputLayer]); t++ { // перебор всех эл-тов слоя outputLayer
-			errHL += net.nn[outputLayer][t].w[l] * dw //
+		for t := 0; t < len(net.NN[outputLayer]); t++ { // перебор всех эл-тов слоя outputLayer
+			errHL += net.NN[outputLayer][t].W[l] * dw //
 		}
-		errHL = errHL / float64(len(net.nn[outputLayer]))
+		errHL = errHL / float64(len(net.NN[outputLayer]))
 
-		dwHL := errHL * sigmoidDerivative(nn.value) // дельта весов для слоя hiddenLayer
-		for i := 0; i < len(net.nn[inputLayer]); i++ {
-			nn.w[i] -= net.nn[inputLayer][i].value * dwHL * rate // корректировка весов слоя hiddenLayer
+		dwHL := errHL * sigmoidDerivative(nn.Value) // дельта весов для слоя hiddenLayer
+		//dwHL := errHL * thPrime(nn.Value) // дельта весов для слоя hiddenLayer
+		for i := 0; i < len(net.NN[inputLayer]); i++ {
+			nn.W[i] -= net.NN[inputLayer][i].Value * dwHL * rate // корректировка весов слоя hiddenLayer
 		}
 	}
 }
 
 // расчет общей среднеквадратичной погрешности нейросети
 // print = true - выводит погрешности всех входных данных на экран
-func calculateAllErrRateNN(net *NN, ds []Data, print bool) float64 {
+func calculateAllErrRateNN(net *Net, ds []Data, print bool) float64 {
 	var errRateNN float64 // погрешность нейросети
 
 	if print {
-		fmt.Println("exp      res      mse")
+		fmt.Println("exp      res      MSE")
 	}
 
 	for _, d := range ds {
@@ -220,7 +230,7 @@ func calculateAllErrRateNN(net *NN, ds []Data, print bool) float64 {
 	}
 
 	if print {
-		fmt.Printf("total mse: %0.6f\n", errRateNN/float64(len(ds)))
+		fmt.Printf("total MSE: %0.6f\n", errRateNN/float64(len(ds)))
 	}
 
 	return errRateNN / float64(len(ds))
@@ -228,23 +238,23 @@ func calculateAllErrRateNN(net *NN, ds []Data, print bool) float64 {
 
 // прямая работа нейросети:
 // data - входные данные,
-// nn - нейросеть
-func directWorkNN(net *NN, data []float64) []float64 {
+// NN - нейросеть
+func directWorkNN(net *Net, data []float64) []float64 {
 	var dataLayer []float64
 	submitEntryNN(net, data)           // подаем данные на входной слой нейросети
-	for i := 1; i < len(net.nn); i++ { // начинаем со скрытого слоя
-		dataLayer = make([]float64, 0, len(net.nn[i]))
-		for _, d := range net.nn[i] {
-			v := unitCalc(data, d.w)
+	for i := 1; i < len(net.NN); i++ { // начинаем со скрытого слоя
+		dataLayer = make([]float64, 0, len(net.NN[i]))
+		for _, d := range net.NN[i] {
+			v := unitCalc(data, d.W)
 			dataLayer = append(dataLayer, v)
-			d.value = v
+			d.Value = v
 		}
 		data = dataLayer
 	}
 	return dataLayer
 }
 
-// расчет значения нейрона  (d - входные данные, w - веса нейрона)
+// расчет значения нейрона  (d - входные данные, W - веса нейрона)
 func unitCalc(d, w []float64) float64 {
 	if len(d) < len(w) {
 		for i := len(d); i < len(w); i++ {
@@ -256,16 +266,17 @@ func unitCalc(d, w []float64) float64 {
 		sum += d[i] * w[i]
 	}
 	return sigmoid(sum)
+	//return th(sum)
 }
 
 // подать данные на вход нейросети
-func submitEntryNN(net *NN, data []float64) {
+func submitEntryNN(net *Net, data []float64) {
 	const inputLayer = 0
 	for i, d := range data {
-		if i > len(net.nn[inputLayer])-1 {
+		if i > len(net.NN[inputLayer])-1 {
 			break
 		}
-		net.nn[inputLayer][i].value = d
+		net.NN[inputLayer][i].Value = d
 	}
 }
 
@@ -279,6 +290,17 @@ func sigmoidDerivative(x float64) float64 {
 	return sigmoid(x) * (1 - sigmoid(x))
 }
 
+// th - гиперболический тангенс
+func th(x float64) float64 {
+	return (math.Exp(2*x) - 1) / (math.Exp(2*x) + 1)
+}
+
+// thPrime - производная гиперболического тангенса
+func thPrime(x float64) float64 {
+	ch := (math.Exp(x) + math.Exp(-x)) / 2 // гиперболический косинус
+	return 1.0 / ch * ch
+}
+
 // среднеквадратичная ошибка
 func MSE(actuals, expected []float64) float64 {
 	if len(actuals) != len(expected) {
@@ -288,17 +310,55 @@ func MSE(actuals, expected []float64) float64 {
 	for i, actual := range actuals {
 		sum += math.Pow((expected[i] - actual), 2.0)
 	}
-	return sum / float64(len(actuals))
+	return math.Sqrt(sum / float64(len(actuals)))
 }
 
 // распечатать данные нейросети
-func printNN(d *NN) {
+func printNN(d *Net) {
 	s := []string{"Input", "Hidden", "Output"}
-	for i, ls := range d.nn {
+	for i, ls := range d.NN {
 		fmt.Printf("%s layer:\n", s[i])
 		for _, l := range ls {
 			fmt.Println(l)
 		}
 		fmt.Println()
 	}
+}
+
+func saveNN(net *Net, fileNameNN string) {
+	jsonDataNN, errMarshal := json.Marshal(net)
+	if errMarshal != nil {
+		fmt.Println("error json marshal:", errMarshal.Error())
+		return
+	}
+
+	file, errCreate := os.Create(fileNameNN)
+	if errCreate != nil {
+		fmt.Println("error create file:", errCreate.Error())
+		return
+	}
+	defer file.Close()
+
+	_, errWrite := file.Write(jsonDataNN)
+	if errWrite != nil {
+		fmt.Println("error write file:", errWrite.Error())
+		return
+	}
+
+	fmt.Println("neural network in a saved file:", fileNameNN)
+}
+
+func openNN(fileNameNN string) *Net {
+	nn := &Net{}
+	data, err := ioutil.ReadFile(fileNameNN)
+	if err != nil {
+		fmt.Println("error open file", err.Error())
+		return nil
+	}
+	err = json.Unmarshal(data, nn)
+	if err != nil {
+		fmt.Println("error json unmarshal", err.Error())
+		return nil
+	}
+	return nn
 }
