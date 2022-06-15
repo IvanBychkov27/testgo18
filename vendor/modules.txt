@@ -29,18 +29,30 @@ github.com/go-gl/glfw/v3.3/glfw/glfw/deps/mingw
 github.com/go-gl/glfw/v3.3/glfw/glfw/deps/vs2008
 github.com/go-gl/glfw/v3.3/glfw/glfw/include/GLFW
 github.com/go-gl/glfw/v3.3/glfw/glfw/src
+# github.com/godbus/dbus v4.1.0+incompatible
+## explicit
+github.com/godbus/dbus
 # github.com/gofrs/flock v0.8.1
 ## explicit
 github.com/gofrs/flock
+# github.com/gordonklaus/portaudio v0.0.0-20220320131553-cc649ad523c1
+## explicit
+github.com/gordonklaus/portaudio
 # github.com/hajimehoshi/ebiten/v2 v2.3.0
 ## explicit; go 1.15
 github.com/hajimehoshi/ebiten/v2
 github.com/hajimehoshi/ebiten/v2/audio
 github.com/hajimehoshi/ebiten/v2/audio/internal/cbackend
+github.com/hajimehoshi/ebiten/v2/audio/internal/convert
 github.com/hajimehoshi/ebiten/v2/audio/internal/go2cpp
+github.com/hajimehoshi/ebiten/v2/audio/mp3
+github.com/hajimehoshi/ebiten/v2/audio/vorbis
+github.com/hajimehoshi/ebiten/v2/audio/wav
 github.com/hajimehoshi/ebiten/v2/ebitenutil
 github.com/hajimehoshi/ebiten/v2/ebitenutil/internal/assets
+github.com/hajimehoshi/ebiten/v2/examples/resources/audio
 github.com/hajimehoshi/ebiten/v2/examples/resources/fonts
+github.com/hajimehoshi/ebiten/v2/examples/resources/images/audio
 github.com/hajimehoshi/ebiten/v2/inpututil
 github.com/hajimehoshi/ebiten/v2/internal/affine
 github.com/hajimehoshi/ebiten/v2/internal/atlas
@@ -103,6 +115,21 @@ github.com/jezek/xgb
 github.com/jezek/xgb/randr
 github.com/jezek/xgb/render
 github.com/jezek/xgb/xproto
+# github.com/jfreymuth/oggvorbis v1.0.3
+## explicit; go 1.15
+github.com/jfreymuth/oggvorbis
+# github.com/jfreymuth/vorbis v1.0.2
+## explicit; go 1.15
+github.com/jfreymuth/vorbis
+# github.com/mark2b/wpa-connect v1.5.1
+## explicit; go 1.15
+github.com/mark2b/wpa-connect
+github.com/mark2b/wpa-connect/internal/log
+github.com/mark2b/wpa-connect/internal/wpa_cli
+github.com/mark2b/wpa-connect/internal/wpa_dbus
+# github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
+## explicit
+github.com/op/go-logging
 # github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 ## explicit; go 1.14
 github.com/pkg/browser

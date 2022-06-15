@@ -6,7 +6,11 @@ require (
 	github.com/AllenDang/giu v0.6.2
 	github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad
 	github.com/faiface/beep v1.1.0
+	github.com/gordonklaus/portaudio v0.0.0-20220320131553-cc649ad523c1
 	github.com/hajimehoshi/ebiten/v2 v2.3.0
+	github.com/hajimehoshi/go-mp3 v0.3.3
+	github.com/hajimehoshi/oto v0.7.1
+	github.com/mark2b/wpa-connect v1.5.1
 	github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c
 	golang.org/x/image v0.0.0-20220321031419-a8550c1d254a
 )
@@ -16,11 +20,13 @@ require (
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect
 	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20220320163800-277f93cfa958 // indirect
+	github.com/godbus/dbus v4.1.0+incompatible // indirect
 	github.com/gofrs/flock v0.8.1 // indirect
-	github.com/hajimehoshi/go-mp3 v0.3.3 // indirect
-	github.com/hajimehoshi/oto v0.7.1 // indirect
 	github.com/hajimehoshi/oto/v2 v2.1.0 // indirect
 	github.com/jezek/xgb v1.0.0 // indirect
+	github.com/jfreymuth/oggvorbis v1.0.3 // indirect
+	github.com/jfreymuth/vorbis v1.0.2 // indirect
+	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect

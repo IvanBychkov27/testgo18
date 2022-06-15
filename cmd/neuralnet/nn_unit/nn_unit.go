@@ -11,7 +11,7 @@ import (
 )
 
 type Data struct {
-	x []float64 // входные данных
+	x []float64 // входные данные
 	r []float64 // результат
 }
 
