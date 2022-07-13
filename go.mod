@@ -5,7 +5,9 @@ go 1.18
 require (
 	github.com/AllenDang/giu v0.6.2
 	github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad
+	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f
 	github.com/faiface/beep v1.1.0
+	github.com/go-mail/mail v2.3.1+incompatible
 	github.com/gordonklaus/portaudio v0.0.0-20220320131553-cc649ad523c1
 	github.com/hajimehoshi/ebiten/v2 v2.3.0
 	github.com/hajimehoshi/go-mp3 v0.3.3
@@ -35,5 +37,7 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f // indirect
 	golang.org/x/text v0.3.7 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/eapache/queue.v1 v1.1.0 // indirect
+	gopkg.in/mail.v2 v2.3.1 // indirect
 )

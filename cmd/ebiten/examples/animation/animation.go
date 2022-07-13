@@ -1,4 +1,5 @@
 // https://github.com/hajimehoshi/ebiten/blob/main/examples/animation/main.go
+// https://habr.com/ru/post/671556/ - Go ebiten: разбираемся с рендерингом и позиционированием текста
 /*
    Пример: бегущий человечек
 */
