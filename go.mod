@@ -28,14 +28,16 @@ require (
 	github.com/jezek/xgb v1.0.0 // indirect
 	github.com/jfreymuth/oggvorbis v1.0.3 // indirect
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
+	github.com/likexian/whois v1.14.2 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect
 	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect
 	golang.org/x/mobile v0.0.0-20220325161704-447654d348e3 // indirect
+	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/eapache/queue.v1 v1.1.0 // indirect
