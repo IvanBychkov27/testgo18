@@ -12,7 +12,9 @@ require (
 	github.com/hajimehoshi/ebiten/v2 v2.3.0
 	github.com/hajimehoshi/go-mp3 v0.3.3
 	github.com/hajimehoshi/oto v0.7.1
+	github.com/likexian/whois v1.14.2
 	github.com/mark2b/wpa-connect v1.5.1
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c
 	golang.org/x/image v0.0.0-20220321031419-a8550c1d254a
 )
@@ -28,7 +30,6 @@ require (
 	github.com/jezek/xgb v1.0.0 // indirect
 	github.com/jfreymuth/oggvorbis v1.0.3 // indirect
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
-	github.com/likexian/whois v1.14.2 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
