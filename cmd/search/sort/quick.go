@@ -11,12 +11,18 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync/atomic"
+)
+
+var count int64
 
 func main() {
 	data := []int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
 	res := quickSort(data)
 	fmt.Println("res:", res)
+	fmt.Println("count:", count)
 }
 
 func quickSort(data []int) []int {
@@ -27,6 +33,7 @@ func quickSort(data []int) []int {
 	bigger := make([]int, 0)
 	n := data[0]
 	for _, v := range data[1:] {
+		atomic.AddInt64(&count, 1)
 		if v > n {
 			bigger = append(bigger, v)
 		} else {

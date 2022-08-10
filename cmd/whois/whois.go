@@ -19,6 +19,49 @@ server:
 
 4. Для отдельных доменов верхнего уровня работает алиас <домен верхнего уровня>.whoIS-servers.net.
 
+/*
+Работу с whois я бы свел к решению трех принципиальных задач:
+
+1. Определение правильного whois сервера;
+2. Отправка правильного запроса на сервер;
+3. Анализ полученного результата.
+
+http://whois.domaintools.com — лучший whois веб сервис, для образца получаемой информации (как пример что должно быть)
+
+1. Определение правильного whois сервера:
+         whois.iana.org
+         whois.nic.ru
+         <домен>.whois-servers.net
+
+	Для каждого домена, который мы хотим найти, у нас будет целый список потенциальных whois серверов с большей или меньшей вероятностью работоспособности.
+    Например, для russia.edu.ru у нас будет:
+    whois.tcinet.ru (результат IANA для «ru»)
+    whois.edu.ru << нужный нам whois сервер
+    whois.nic.edu.ru
+    whois.nic.ru
+    whois.ru
+    whois.cctld.ru («вымышленный» сервер на основе адреса сайта регистратора)
+    ru.whois-servers.net (по факту, работающий алиас для whois.tcinet.ru)
+
+	Если информации недостаточно можно поискать в тексте Whois Server: с указанным следующим сервисом whois.markmonitor.com (whois может отсутствовать) или
+	если "Whois Server:" не найдено ищи "whois." везде и проверяй по нему...
+
+	С IDN доменами (типа «правительство.рф»), к счастью, никаких проблем нет. Переводим «правительство.рф» в «xn--80aealotwbjpid2k.xn--p1ai» и ищем на whois.iana.org домен верхнего уровня «xn--p1ai»:
+
+2. Отправка правильного запроса на сервер:
+	В подавляющем большинстве случаев нужно просто открыть соединение на порт 43, отправить строку вида "<домен или IP адрес>\r\n" и прочитать данные, которые вернет сервер.
+	Кроме того, следующие whois серверы требуют особый синтаксис:
+    whois.arin.org: «n + <IP адрес>\r\n»
+    whois.denic.de: "-C UTF-8 -T dn,ace <домен>\r\n"
+    whois.dk-hostmaster.dk: "--show-handles <домен>\r\n"
+    whois.nic.name: «domain = <домен>\r\n»
+    whois серверы, принадлежащие VeriSign: «domain <домен>\r\n»
+
+3. Анализ полученного результата:
+	Проверка на валидность результата
+	Проверка на повтор полученных данных
+
+
 */
 
 package main
@@ -32,8 +75,10 @@ import (
 
 func main() {
 	//domain, server := "poker-iv.herokuapp.com", "com.whois-servers.net"
-	domain, server := "ya.ru", "ru.whoIS-servers.net"
-	//domain, server := "ya.ru", "whois.nic.ru"
+	//domain, server := "poker-iv.herokuapp.com", "whois.iana.org" // ok
+	//domain, server := "ya.ru", "ru.whois-servers.net"
+	domain, server := "ya.ru", "whois.nic.ru"
+	//domain, server := "ya.ru", "whois.iana.org" // в результате см. whois:  whois.tcinet.ru  и  remarks: Registration information: http://www.cctld.ru/en - Это собственно и есть whois сервер и сайт регистратора!
 
 	res := whoIS(domain, server)
 	fmt.Println(res)
