@@ -158,6 +158,9 @@ github.com/robfig/cron/v3
 # github.com/sahilm/fuzzy v0.1.0
 ## explicit
 github.com/sahilm/fuzzy
+# github.com/yourbasic/bit v0.0.0-20180313074424-45a4409f4082
+## explicit
+github.com/yourbasic/bit
 # github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c
 ## explicit
 github.com/zenwerk/go-wave

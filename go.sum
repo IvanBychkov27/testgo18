@@ -96,6 +96,8 @@ github.com/sahilm/fuzzy v0.1.0/go.mod h1:VFvziUEIMCrT6A6tw2RFIXPXXmzXbOsSHF0DOI8
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.1 h1:5TQK59W5E3v0r2duFAb7P95B6hEeOyEnHRa8MjYSMTY=
+github.com/yourbasic/bit v0.0.0-20180313074424-45a4409f4082 h1:AWIZQ6fJPAAZdCUElj007LvHa/ER8nOn3CHWajn+1QY=
+github.com/yourbasic/bit v0.0.0-20180313074424-45a4409f4082/go.mod h1:SC4yTthuwUIud4hT6D7kJGIYmhnskaQnm3VD2VYM8EM=
 github.com/yuin/goldmark v1.4.0/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 github.com/yuin/goldmark v1.4.1/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c h1:DgZMI1Q1YuuaY69YbTu3arBk0qlnKWzv4YM2GmNC5tk=

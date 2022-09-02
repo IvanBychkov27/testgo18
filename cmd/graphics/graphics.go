@@ -38,7 +38,12 @@ func textDraw(fileName, text string) {
 	dc.Clear()
 	dc.SetRGB(0, 0, 0)
 
-	err := dc.LoadFontFace("cmd/graphics/fonts/Arial/ArialBlack/ArialBlack.ttf", 96)
+	//font := "cmd/graphics/fonts/Arial/ArialBlack/ArialBlack.ttf"
+	//font := "cmd/graphics/fonts/Arial/ArialBold/ArialBold.ttf"
+	//font := "cmd/graphics/fonts/Arial/ArialItalic/ArialItalic.ttf"
+	font := "cmd/graphics/fonts/Arial/ArialBoldItalic/ArialBoldItalic.ttf"
+	//font := "cmd/graphics/fonts/Arial/ArialRegular/ArialRegular.ttf"
+	err := dc.LoadFontFace(font, 96)
 	if err != nil {
 		log.Println("error:", err.Error())
 	}

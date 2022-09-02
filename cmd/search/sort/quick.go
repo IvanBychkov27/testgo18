@@ -13,6 +13,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"sync/atomic"
 )
 
@@ -20,7 +21,8 @@ var count int64
 
 func main() {
 	data := []int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
-	res := quickSort(data)
+	//res := quickSort(data)
+	res := quickSortV4(data, false)
 	fmt.Println("res:", res)
 	fmt.Println("count:", count)
 }
@@ -43,4 +45,68 @@ func quickSort(data []int) []int {
 	data = append(quickSort(less), n)
 	data = append(data, quickSort(bigger)...)
 	return data
+}
+
+// O(N-1) !!!
+func quickSortV4(a []int, random bool) []int {
+	n := len(a)
+	if n < 2 {
+		return a
+	}
+
+	isSort := true
+	for i := 1; i < n; i++ {
+		count++
+		if a[i-1] > a[i] {
+			isSort = false
+			break
+		}
+	}
+	if isSort {
+		return a
+	}
+
+	idx := n / 2
+	if random {
+		idx = rand.Intn(n)
+	}
+
+	d := a[idx]
+	i := 0
+	j := n - 1
+
+	for i < j {
+		count++
+		if i == idx {
+			if a[j] <= d {
+				a[i], a[j] = a[j], a[i]
+				idx = j
+				i++
+			} else {
+				j--
+			}
+			continue
+		}
+
+		if a[i] < d {
+			i++
+			continue
+		}
+
+		if a[j] <= d {
+			a[i], a[j] = a[j], a[i]
+			if j == idx {
+				idx = i
+			}
+		}
+		j--
+
+	}
+
+	random = false
+	if idx == 0 || idx == n-1 {
+		random = true
+	}
+
+	return append(quickSortV4(a[:idx], random), quickSortV4(a[idx:], random)...)
 }
