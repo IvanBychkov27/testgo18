@@ -79,7 +79,7 @@ func checkB(d int, b []int) bool {
 	return true
 }
 
-//  проверка, что все элементы <= d
+// проверка, что все элементы <= d
 func checkL(d int, c []int) bool {
 	for _, v := range c {
 		if v > d {
@@ -109,7 +109,7 @@ func minEl(a []int) int {
 	return m
 }
 
-//  max
+// max
 func maxEl(a []int) int {
 	m := -1000
 	for _, v := range a {

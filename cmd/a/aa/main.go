@@ -37,19 +37,39 @@ type PoolData struct {
 }
 
 func NewPoolData() *PoolData {
-	p := &PoolData{
-		Data: make([]map[string]*Item, 0, 2),
+	//p := &PoolData{
+	//	Data: make([]map[string]*Item, 0, 2),
+	//}
+	//
+	//p.Data = append(p.Data, map[string]*Item{"1": {1, 1}})
+	//p.Data = append(p.Data, map[string]*Item{"2": {2, 2}})
+
+	//return p
+
+	return &PoolData{
+		Data: []map[string]*Item{{"1": {1, 1}}, {"2": {2, 2}}},
 	}
-
-	p.Data = append(p.Data, map[string]*Item{"1": {1, 1}})
-	p.Data = append(p.Data, map[string]*Item{"2": {2, 2}})
-
-	return p
 }
 
 func (p *PoolData) Next() map[string]*Item {
 	p.count++
 	return p.Data[p.count%2]
+}
+
+// задать новую базу метрик
+func (p *PoolData) Set() map[string]*Item {
+	p.count++
+	return p.Data[p.count%2]
+}
+
+// получить текущую базу метрик
+func (p *PoolData) Get() map[string]*Item {
+	return p.Data[p.count%2]
+}
+
+// очистить текущую базу метрик
+func (p *PoolData) Close() {
+	p.Data[p.count%2] = map[string]*Item{}
 }
 
 func main() {
@@ -82,10 +102,16 @@ func (app *Application) saveMetricsData(ctx context.Context, wg *sync.WaitGroup,
 			return
 		case <-ticker.C:
 			app.inc()
-			for k, v := range app.poolData {
+
+			//for k, v := range app.poolData {
+			//	fmt.Printf("pool data: [%s] = %d \n", k, v.Value)
+			//}
+			data := app.pool.Get()
+			for k, v := range data {
 				fmt.Printf("pool data: [%s] = %d \n", k, v.Value)
 			}
-			app.poolData = app.pool.Next()
+			fmt.Println(data)
+			app.poolData = app.pool.Set()
 		}
 	}
 }

@@ -158,6 +158,10 @@ github.com/robfig/cron/v3
 # github.com/sahilm/fuzzy v0.1.0
 ## explicit
 github.com/sahilm/fuzzy
+# github.com/valyala/fastjson v1.6.4
+## explicit; go 1.12
+github.com/valyala/fastjson
+github.com/valyala/fastjson/fastfloat
 # github.com/yourbasic/bit v0.0.0-20180313074424-45a4409f4082
 ## explicit
 github.com/yourbasic/bit

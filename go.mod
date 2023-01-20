@@ -16,6 +16,7 @@ require (
 	github.com/likexian/whois v1.14.2
 	github.com/mark2b/wpa-connect v1.5.1
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/valyala/fastjson v1.6.4
 	github.com/yourbasic/bit v0.0.0-20180313074424-45a4409f4082
 	github.com/zenwerk/go-wave v0.0.0-20190102022600-1be84bfef50c
 	golang.org/x/image v0.0.0-20220321031419-a8550c1d254a
