@@ -10,6 +10,9 @@ github.com/AllenDang/imgui-go
 # github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f
 ## explicit
 github.com/bmizerany/pat
+# github.com/dnlo/struct2csv v0.0.0-20190928115744-2f584471b24e
+## explicit
+github.com/dnlo/struct2csv
 # github.com/faiface/beep v1.1.0
 ## explicit; go 1.14
 github.com/faiface/beep
@@ -122,6 +125,9 @@ github.com/hajimehoshi/oto/internal/mux
 ## explicit; go 1.14
 github.com/hajimehoshi/oto/v2
 github.com/hajimehoshi/oto/v2/internal/oboe
+# github.com/iancoleman/strcase v0.2.0
+## explicit; go 1.16
+github.com/iancoleman/strcase
 # github.com/jezek/xgb v1.0.0
 ## explicit; go 1.11
 github.com/jezek/xgb

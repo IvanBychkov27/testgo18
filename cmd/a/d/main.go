@@ -7,14 +7,16 @@ import (
 )
 
 func main() {
-	n := 10
-	a := 17
-	b := 9
-	d := 10
-	for x := 0; x < n; x++ {
-		r := (a*x + b) % d
-		fmt.Println(r)
+
+	d := "2023-01-25"
+
+	day, err := time.Parse("2006-01-02", d)
+	if err != nil {
+		fmt.Println("error:", err.Error())
+		return
 	}
+
+	fmt.Println("day:", day)
 
 }
 

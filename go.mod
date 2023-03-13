@@ -6,6 +6,7 @@ require (
 	github.com/AllenDang/giu v0.6.2
 	github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad
 	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f
+	github.com/dnlo/struct2csv v0.0.0-20190928115744-2f584471b24e
 	github.com/faiface/beep v1.1.0
 	github.com/fogleman/gg v1.3.0
 	github.com/go-mail/mail v2.3.1+incompatible
@@ -31,6 +32,7 @@ require (
 	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/hajimehoshi/oto/v2 v2.1.0 // indirect
+	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/jezek/xgb v1.0.0 // indirect
 	github.com/jfreymuth/oggvorbis v1.0.3 // indirect
 	github.com/jfreymuth/vorbis v1.0.2 // indirect

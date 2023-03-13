@@ -2,15 +2,30 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	data := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
 
-	for i := 0; i < 10; i++ {
-		n := rand.Intn(10)
-		fmt.Println("n =", n)
+	page := 4
+	perPage := 5
+	total := len(data)
+
+	n, k := currentData(page, perPage, total)
+
+	fmt.Println("d:", data[n:k])
+
+}
+
+func currentData(page, perPage, total int) (int, int) {
+	k := page * perPage
+	n := k - perPage
+	if n >= total {
+		n = 0
+		k = perPage
 	}
+	if k > total {
+		k = total
+	}
+	return n, k
 }
