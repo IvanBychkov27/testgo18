@@ -56,7 +56,8 @@ const (
 )
 
 func main() {
-	rand.Seed(time.Now().UnixMilli())
+	//rand.Seed(time.Now().UnixMilli())
+	rand.NewSource(time.Now().UnixMilli())
 
 	allDir = make([]string, 0, 1000)
 	allFiles = make([]string, 0, 1000)

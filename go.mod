@@ -14,6 +14,7 @@ require (
 	github.com/hajimehoshi/ebiten/v2 v2.3.0
 	github.com/hajimehoshi/go-mp3 v0.3.3
 	github.com/hajimehoshi/oto v0.7.1
+	github.com/jmespath/go-jmespath v0.4.0
 	github.com/likexian/whois v1.14.2
 	github.com/mark2b/wpa-connect v1.5.1
 	github.com/robfig/cron/v3 v3.0.1

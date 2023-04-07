@@ -140,6 +140,9 @@ github.com/jfreymuth/oggvorbis
 # github.com/jfreymuth/vorbis v1.0.2
 ## explicit; go 1.15
 github.com/jfreymuth/vorbis
+# github.com/jmespath/go-jmespath v0.4.0
+## explicit; go 1.14
+github.com/jmespath/go-jmespath
 # github.com/likexian/whois v1.14.2
 ## explicit; go 1.18
 github.com/likexian/whois
